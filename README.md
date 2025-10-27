@@ -1,122 +1,133 @@
-Sure — here’s the complete, ready-to-copy README.md, cleanly formatted for GitHub (no extra commentary):
-
 # 💼 Salary Prediction App (Python + ML)
 
-A machine learning web application that predicts salary based on input features such as experience, education, and job-related factors.  
-This project demonstrates a complete ML workflow — from model training to deployment — using **Python**, **Flask**, **Docker**, and **Firebase + Cloud Run** for 24/7 hosting.
+A machine learning web application that predicts salaries based on various input features such as experience, education level, and job position.  
+Built with **Python**, **Flask**, **Docker**, and deployed using **Firebase Hosting + Google Cloud Run** for 24/7 uptime.
 
 ---
 
 ## 🚀 Features
 
-- 🧠 **Machine Learning Model** for salary prediction  
-- 🌐 **Web Interface (Flask)** for user interaction  
-- 🐳 **Dockerized** for easy deployment  
-- ☁️ **Firebase + Cloud Run Integration** for scalable, always-on hosting  
-- 📊 Clean and modular project structure  
+- 🧠 Machine Learning salary prediction model  
+- 🌐 Flask-based web interface  
+- 🐳 Dockerized for portability and easy deployment  
+- ☁️ Runs continuously on Firebase + Cloud Run  
+- 📊 Clean, modular, and production-ready structure  
 
 ---
 
 ## 📂 Project Structure
 
-
-
+```
 SalaryPrediction-Python/
 │
-├── app.py # Main Flask app
-├── model/ # ML model, preprocessing code, training scripts
-├── static/ # CSS, JS, and other frontend assets
-├── templates/ # HTML templates (Jinja2)
-├── requirements.txt # Python dependencies
-├── Dockerfile # Container configuration
-├── start.sh # Launch script (optional)
-├── firebase.json # Firebase Hosting config (for Cloud Run integration)
-└── README.md # This file 🙂
-
+├── app.py                # Main Flask app
+├── model/                # Model training and inference logic
+├── static/               # Static assets (CSS, JS, images)
+├── templates/            # HTML templates
+├── requirements.txt      # Python dependencies
+├── Dockerfile            # Docker configuration
+├── start.sh              # App start script
+├── firebase.json         # Firebase Hosting config
+└── README.md             # Project documentation
+```
 
 ---
 
-## ⚙️ Installation (Local)
+## ⚙️ Installation (Local Setup)
 
-### 1️⃣ Clone the repository
+### 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/KacperDula/SalaryPrediction-Python.git
 cd SalaryPrediction-Python
+```
 
-2️⃣ Create a virtual environment & install dependencies
+### 2️⃣ Create Virtual Environment & Install Dependencies
+```bash
 python3 -m venv venv
-source venv/bin/activate  # (on Windows: venv\Scripts\activate)
+source venv/bin/activate   # (Windows: venv\Scripts\activate)
 pip install -r requirements.txt
+```
 
-3️⃣ Run the app locally
+### 3️⃣ Run the Application
+```bash
 python app.py
+```
 
+Visit: [http://localhost:5000](http://localhost:5000)
 
-Then open http://localhost:5000
- in your browser.
+---
 
-🐳 Run with Docker
-1️⃣ Build the Docker image
+## 🐳 Run Using Docker
+
+### Build Image
+```bash
 docker build -t salary-prediction .
+```
 
-2️⃣ Run the container
+### Run Container
+```bash
 docker run -d -p 8080:8080 salary-prediction
+```
 
+Visit: [http://localhost:8080](http://localhost:8080)
 
-Visit http://localhost:8080
- to use the app.
+> Ensure your Flask app runs with:
+> ```python
+> app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+> ```
 
-Make sure your Flask app listens on host='0.0.0.0' and port=int(os.environ.get('PORT', 8080)) for Docker & Cloud Run compatibility.
+---
 
-☁️ Deploy to Firebase + Cloud Run (24/7 Hosting)
-Prerequisites
+## ☁️ Deploy to Firebase + Cloud Run (Always-On Hosting)
 
-A Google Cloud project (Blaze plan)
+### Prerequisites
+- Firebase project (Blaze plan)
+- Installed Firebase CLI and Google Cloud SDK:
+  ```bash
+  npm install -g firebase-tools
+  curl https://sdk.cloud.google.com | bash
+  ```
 
-Firebase CLI and gcloud SDK installed:
+- Authenticate:
+  ```bash
+  gcloud auth login
+  firebase login
+  ```
 
-npm install -g firebase-tools
-curl https://sdk.cloud.google.com | bash
+---
 
+### 1️⃣ Enable Required Services
+```bash
+gcloud services enable run.googleapis.com   artifactregistry.googleapis.com   cloudbuild.googleapis.com   firebasehosting.googleapis.com
+```
 
-Logged in:
+---
 
-gcloud auth login
-firebase login
+### 2️⃣ Build & Push Image to Artifact Registry
+```bash
+gcloud builds submit   --tag us-central1-docker.pkg.dev/<GCP_PROJECT_ID>/app-images/salarypred:1
+```
 
-1️⃣ Enable required services
-gcloud services enable run.googleapis.com \
-  artifactregistry.googleapis.com \
-  cloudbuild.googleapis.com \
-  firebasehosting.googleapis.com
+---
 
-2️⃣ Build and push your Docker image
-gcloud builds submit \
-  --tag us-central1-docker.pkg.dev/<GCP_PROJECT_ID>/app-images/salarypred:1
+### 3️⃣ Deploy to Cloud Run
+```bash
+gcloud run deploy salarypred   --image us-central1-docker.pkg.dev/<GCP_PROJECT_ID>/app-images/salarypred:1   --platform managed   --region us-central1   --allow-unauthenticated   --port 8080   --min-instances 1   --max-instances 3
+```
 
-3️⃣ Deploy to Cloud Run
-gcloud run deploy salarypred \
-  --image us-central1-docker.pkg.dev/<GCP_PROJECT_ID>/app-images/salarypred:1 \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --port 8080 \
-  --min-instances 1 \
-  --max-instances 3
+> `--min-instances 1` keeps the app alive 24/7.
 
+---
 
-🔸 --min-instances 1 keeps it running 24/7
-🔸 The command returns a public Cloud Run URL — copy it
+### 4️⃣ Connect Firebase Hosting
 
-4️⃣ Connect Firebase Hosting
-
-Initialize Firebase in your repo (creates firebase.json):
-
+Initialize Firebase Hosting:
+```bash
 firebase init hosting
+```
 
-
-Then edit firebase.json:
-
+Update your `firebase.json`:
+```json
 {
   "hosting": {
     "public": "public",
@@ -132,62 +143,63 @@ Then edit firebase.json:
     ]
   }
 }
+```
 
-
-Deploy Hosting:
-
+Deploy Firebase Hosting:
+```bash
 firebase deploy --only hosting
+```
 
-
-You’ll get a Firebase domain such as
-👉 https://your-project.web.app
-
-All requests will be forwarded to your Cloud Run container.
-
-🧰 Tech Stack
-Layer	Technology
-Language	Python 3
-Web Framework	Flask
-Machine Learning	scikit-learn / pandas / numpy
-Containerization	Docker
-Deployment	Google Cloud Run + Firebase Hosting
-Frontend	HTML5, CSS3, Bootstrap
-Version Control	Git + GitHub
-🧑‍💻 Development Notes
-
-To retrain the model, modify scripts under model/ and update the serialized .pkl file used in app.py.
-
-Ensure the same Python & dependency versions locally and in Docker.
-
-Use environment variables for sensitive configuration (API keys, secrets).
-
-🤝 Contributing
-
-Contributions are welcome!
-
-Fork the repo
-
-Create a new branch: git checkout -b feature/awesome-feature
-
-Commit your changes
-
-Push the branch and open a Pull Request
-
-🪪 License
-
-This project is licensed under the MIT License
-.
-Feel free to use, modify, and distribute it.
-
-📧 Contact
-
-Created by Kacper Dula
-
-For questions or suggestions, open an issue
- on GitHub.
-
-⭐ If you found this project useful, please give it a star!
+Access your app via:
+```
+https://<your-project>.web.app
+```
 
 ---
 
-You can copy this entire block into a `README.md` file in your GitHub repo — it’s fully Markdown-compatible and ready to render perfectly.
+## 🧰 Tech Stack
+
+| Category | Technology |
+|-----------|-------------|
+| **Language** | Python 3 |
+| **Framework** | Flask |
+| **Machine Learning** | scikit-learn, pandas, numpy |
+| **Frontend** | HTML, CSS, Bootstrap |
+| **Containerization** | Docker |
+| **Hosting** | Firebase Hosting + Google Cloud Run |
+| **Version Control** | Git & GitHub |
+
+---
+
+## 🧑‍💻 Development Notes
+
+- Modify and retrain the ML model under the `model/` directory.  
+- Ensure consistent Python versions between local and deployment environments.  
+- Store sensitive info (API keys, etc.) as environment variables.
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository  
+2. Create a feature branch: `git checkout -b feature/your-feature`  
+3. Commit your changes  
+4. Push and create a Pull Request  
+
+---
+
+## 🪪 License
+
+This project is licensed under the [MIT License](LICENSE).  
+You’re free to use and modify it with attribution.
+
+---
+
+## 📧 Contact
+
+**Author:** [Kacper Dula](https://github.com/KacperDula)  
+For questions or suggestions, open an [issue](https://github.com/KacperDula/SalaryPrediction-Python/issues).
+
+---
+
+⭐ **If you like this project, please give it a star on GitHub!**
